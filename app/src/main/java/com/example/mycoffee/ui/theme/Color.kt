@@ -2,6 +2,18 @@ package com.example.mycoffee.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+val RedFocus = Color(0xFFE2434B)
+val Light = Color(0xFFFEE9D7)
+val Disabled = Color(0xFF646363)
+val Secondary = Color(0xFF34222E)
+val Main = Color(0xFFF9BF8F)
+
+val DisabledFont = Color(0xFFDFDCDC)
+val Darkness = Color(0xFF1D1D29)
+val IconBackground = Color(0xFFE6E3FF)
+val GreenValid = Color(0xFF52D681)
+val RedValid = Color(0xFFFF5722)
+
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)
