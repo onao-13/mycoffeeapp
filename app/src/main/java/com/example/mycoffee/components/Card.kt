@@ -18,7 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mycoffee.R
-import com.example.mycoffee.system.utils.ScreenUtil
 import com.example.mycoffee.ui.theme.FabColor
 import com.example.mycoffee.ui.theme.LightGrey
 import com.example.mycoffee.ui.theme.Main
