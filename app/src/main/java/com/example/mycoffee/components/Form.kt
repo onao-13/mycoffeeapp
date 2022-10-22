@@ -10,7 +10,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mycoffee.ui.theme.*
@@ -19,9 +18,9 @@ import com.example.mycoffee.ui.theme.*
 fun RegistrationForm(modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
-            .width(300.dp),
+            .fillMaxWidth(0.84f),
         shape = RoundedCornerShape(16.dp),
-        colors = cardColors()
+        colors = CardDefaults.cardColors(containerColor = Light)
     ) {
         val name = remember { mutableStateOf("") }
         val number = remember { mutableStateOf("") }
@@ -77,7 +76,7 @@ private fun FormTextField(
     TextField(
         value = inputText.value,
         onValueChange = { inputText.value = it },
-        maxLines = 1,
+        singleLine = true,
         shape = RoundedCornerShape(0.dp),
         colors = formColors()
     )
@@ -105,18 +104,11 @@ private fun formColors(): TextFieldColors {
 }
 
 @Composable
-private fun cardColors(): CardColors {
-    return CardDefaults.cardColors(
-        containerColor = Light
-    )
-}
-
-@Composable
 fun LoginForm(modifier: Modifier = Modifier) {
     Card(
-        modifier = modifier.width(300.dp),
+        modifier = modifier.fillMaxWidth(0.84f),
         shape = RoundedCornerShape(16.dp),
-        colors = cardColors()
+        colors = CardDefaults.cardColors(containerColor = Light)
     ) {
         val number = remember { mutableStateOf("") }
         val password = remember { mutableStateOf("") }
@@ -145,13 +137,5 @@ fun LoginForm(modifier: Modifier = Modifier) {
             }
             Spacer(Modifier.padding(bottom = 20.dp))
         }
-    }
-}
-
-@Preview
-@Composable
-private fun LoginFormPreview() {
-    MyCoffeeTheme {
-        LoginForm()
     }
 }

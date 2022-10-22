@@ -22,9 +22,9 @@ import com.example.mycoffee.ui.theme.IconBackground
 
 
 @Composable
-fun CafemeIcon() {
+fun CafemeIcon(modifier: Modifier) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .size(230.dp)
             .rotate(-17f)
             .alpha(0.9f),
@@ -47,13 +47,4 @@ private fun iconColor(): CardColors {
     return CardDefaults.cardColors(
         contentColor = IconBackground
     )
-}
-
-
-@Preview(widthDp = 500, heightDp = 500)
-@Composable
-private fun CofemeIconPreview() {
-    MyCoffeeTheme {
-        CafemeIcon()
-    }
 }

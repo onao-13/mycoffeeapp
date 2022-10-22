@@ -1,5 +1,5 @@
 package com.example.mycoffee.system
 
 enum class Screen {
-    Start, Registration, Login
+    Start, Registration, Login, Stock, CoffeeList, Profile
 }

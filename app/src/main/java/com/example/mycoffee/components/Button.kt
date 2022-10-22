@@ -1,12 +1,11 @@
 package com.example.mycoffee.components
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.mycoffee.ui.theme.*
 
@@ -19,7 +18,9 @@ fun MainFocusButton(
     buttonTitle: String
 ) {
     FilledTonalButton(
-        modifier = modifier.width(250.dp).height(55.dp),
+        modifier = modifier
+            .fillMaxWidth(0.84f)
+            .height(55.dp),
         enabled = enabled,
         shape = RoundedCornerShape(100.dp),
         colors = colors,
@@ -37,7 +38,9 @@ fun SecondaryButton(
     buttonTitle: String
 ) {
     FilledTonalButton(
-        modifier = modifier.width(250.dp).height(55.dp),
+        modifier = modifier
+            .fillMaxWidth(0.84f)
+            .height(55.dp),
         enabled = enabled,
         shape = RoundedCornerShape(100.dp),
         colors = colors,
@@ -65,15 +68,4 @@ private fun secondaryButtonColors(): ButtonColors {
         disabledContentColor = Disabled,
         disabledContainerColor = DisabledFont
     )
-}
-
-@Preview
-@Composable
-private fun FocusButtonPreview() {
-    MyCoffeeTheme {
-        MainFocusButton(
-            onClick = { /*TODO*/ },
-            buttonTitle = "Text"
-        )
-    }
 }

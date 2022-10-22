@@ -8,6 +8,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.BlendMode
@@ -21,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mycoffee.R
@@ -46,8 +48,8 @@ class RegistrationActivity: ComponentActivity() {
 
 @Composable
 fun RegistrationScreen(navController: NavController) {
-    Column(
-        modifier = Modifier
+    ConstraintLayout(
+        Modifier
             .fillMaxSize()
             .paint(
                 painter = painterResource(
@@ -58,21 +60,43 @@ fun RegistrationScreen(navController: NavController) {
                     blendMode = BlendMode.SrcOver
                 ),
                 contentScale = ContentScale.Crop
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
+            )
     ) {
-        Spacer(Modifier.padding(top = 110.dp))
-        RegistrationText()
-        Spacer(Modifier.padding(top = 50.dp))
-        RegistrationForm()
-        Spacer(Modifier.padding(top = 60.dp))
+        val (text, form, login, registration) = createRefs()
+
+        RegistrationText(
+            Modifier
+                .fillMaxWidth()
+                .wrapContentWidth(CenterHorizontally)
+                .constrainAs(text) {
+                    top.linkTo(parent.top, margin = 80.dp)
+            }
+        )
+        RegistrationForm(
+            Modifier
+                .fillMaxWidth()
+                .wrapContentWidth(CenterHorizontally)
+                .constrainAs(form) {
+                    top.linkTo(text.bottom, margin = 60.dp)
+                }
+        )
         MainFocusButton(
-            onClick = { /*TODO*/ },
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentWidth(CenterHorizontally)
+                .constrainAs(login) {
+                    bottom.linkTo(registration.top, margin = 20.dp)
+                },
+            onClick = { navController.navigate(Screen.Stock.toString()) },
             buttonTitle = "Зарегестрироваться"
         )
-        Spacer(Modifier.padding(top = 20.dp))
         SecondaryButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentWidth(CenterHorizontally)
+                .constrainAs(registration) {
+                    bottom.linkTo(parent.bottom, margin = 40.dp)
+                },
             onClick = { navController.navigate(Screen.Login.toString()) },
             buttonTitle = "Войти"
         )
@@ -80,8 +104,9 @@ fun RegistrationScreen(navController: NavController) {
 }
 
 @Composable
-private fun RegistrationText() {
+private fun RegistrationText(modifier: Modifier) {
     Text(
+        modifier = modifier,
         text = "Регистрация \n в Cafemo",
         fontSize = 32.sp,
         fontWeight = FontWeight.Bold,
@@ -91,4 +116,13 @@ private fun RegistrationText() {
             TextStyle(lineHeight = 1.5.em)
         )
     )
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    MyCoffeeTheme {
+        val navController = rememberNavController()
+        RegistrationScreen(navController)
+    }
 }
