@@ -3,11 +3,12 @@ package com.example.mycoffee.screens.main
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,35 +33,73 @@ class StockActivity: ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StockScreen(navController: NavController) {
+    val showBuyingPanel = remember { mutableStateOf(false) }
+
+    var panelHeight by remember { mutableStateOf(0.55f) }
+    if (panelHeight >= 0.55f) panelHeight = 0.55f
+    if (panelHeight <= 0.05f) showBuyingPanel.value = false
+    val height = if (panelHeight <= 0.55f) panelHeight else 0.55f
+
     Scaffold(
-        topBar = { SearchBagNotificationTopBar() },
+        topBar = { SearchBagNotificationTopBar(navController) },
         containerColor = BackgroundColor,
-        bottomBar = { NavigationMenu(navController) }
+        bottomBar = {
+            if (!showBuyingPanel.value) {
+                panelHeight = 0.55f
+
+                NavigationMenu(navController)
+            } else {
+                BuyingPanel(
+                    navController,
+                    rememberScrollableState { delta ->
+                        panelHeight -= delta / 2000f
+                        delta
+                    },
+                    height
+                )
+            }
+        }
     ) {
         LazyColumn(
             modifier = Modifier
                 .padding(it)
-                .padding(top = 20.dp)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item {
-                Title("Горячие предложения")
+                Title(
+                    "Горячие предложения",
+                    Modifier.padding(top = 20.dp)
+                )
             }
             item {
-                BannerRow(Modifier.padding(start = 14.dp, end = 14.dp), 6)
+                BannerRow(
+                    Modifier.padding(start = 14.dp, end = 14.dp),
+                    6,
+                    navController
+                )
             }
             item {
                 Title("Популярное у нас")
             }
             item {
-                CoffeeCardRow(Modifier.padding(start = 14.dp, end = 14.dp), 4)
+                CoffeeCardRow(
+                    Modifier.padding(start = 14.dp, end = 14.dp),
+                    4,
+                    navController
+                ) {
+                    showBuyingPanel.value = true
+                }
             }
             item {
                 Title("Попробуй так же")
             }
             items(6) {
-                MiniCoffeeCardsColumn()
+                MiniCoffeeCardsColumn(
+                    navController = navController
+                ) {
+                    showBuyingPanel.value = true
+                }
             }
             item {
                 Title("Твои заказы")
@@ -71,7 +110,9 @@ fun StockScreen(navController: NavController) {
                         start = 14.dp,
                         bottom = 20.dp,
                         end = 14.dp
-                    ), 4)
+                    ),
+                    4
+                )
             }
         }
     }

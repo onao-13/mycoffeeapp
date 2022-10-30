@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
@@ -88,7 +86,7 @@ fun LoginScreen(navController: NavController) {
                 .constrainAs(registration) {
                     bottom.linkTo(login.top, margin = 20.dp)
                 },
-            onClick = { navController.navigate(Screen.Stock.toString()) },
+            onClick = { navController.navigate(Screen.Stock.route) },
             buttonTitle = "Войти"
         )
         SecondaryButton(
@@ -98,7 +96,7 @@ fun LoginScreen(navController: NavController) {
                 .constrainAs(login) {
                     bottom.linkTo(parent.bottom, margin = 40.dp)
             },
-            onClick = { navController.navigate(Screen.Registration.toString()) },
+            onClick = { navController.navigate(Screen.Registration.route) },
             buttonTitle = "Зарегестрироваться"
         )
     }

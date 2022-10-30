@@ -1,6 +1,7 @@
 package com.example.mycoffee.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,21 +18,42 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.example.mycoffee.R
-import com.example.mycoffee.ui.theme.FabColor
-import com.example.mycoffee.ui.theme.LightGrey
-import com.example.mycoffee.ui.theme.Main
+import com.example.mycoffee.system.Screen
+import com.example.mycoffee.ui.theme.*
 
 @Composable
-private fun BannerCard(
+fun MainCard(
     modifier: Modifier = Modifier,
-    image: Painter
+    content: @Composable () -> Unit
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = Light,
+            contentColor = Secondary
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        content()
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BannerCard(
+    modifier: Modifier = Modifier,
+    image: Painter,
+    onClick: () -> Unit
 ) {
     Card(
         modifier = modifier
             .height(160.dp)
             .width(300.dp),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
+        onClick = onClick
     ) {
         Image(
             painter = image,
@@ -41,27 +63,11 @@ private fun BannerCard(
     }
 }
 
-@Composable
-fun BannerRow(
-    modifier: Modifier = Modifier,
-    count: Int
-) {
-    LazyRow(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(14.dp)
-    ) {
-        items(count) {
-            BannerCard(
-                image = painterResource(R.drawable.banner)
-            )
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CoffeeCard(
+fun CoffeeCard(
     modifier: Modifier = Modifier,
+    openBuyingPanel: () -> Unit,
     onClick: () -> Unit
 ) {
     Card(
@@ -69,7 +75,10 @@ private fun CoffeeCard(
             .width(300.dp)
             .height(280.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Main),
+        colors = CardDefaults.cardColors(
+            containerColor = Main,
+            contentColor = Secondary
+        ),
         onClick = onClick
     ) {
         Column {
@@ -96,7 +105,7 @@ private fun CoffeeCard(
                     Text(text = "Описание", modifier = Modifier.padding(top = 10.dp))
                 }
                 FloatingActionButton(
-                    onClick = { /*TODO*/ },
+                    onClick = openBuyingPanel,
                     containerColor = FabColor,
                     modifier = Modifier.padding(end = 10.dp)
                 ) {
@@ -105,23 +114,6 @@ private fun CoffeeCard(
                         contentDescription = "fab icon"
                     )
                 }
-            }
-        }
-    }
-}
-
-@Composable
-fun CoffeeCardRow(
-    modifier: Modifier = Modifier,
-    count: Int
-) {
-    LazyRow(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(14.dp)
-    ) {
-        items(count) {
-            CoffeeCard {
-
             }
         }
     }
@@ -144,7 +136,9 @@ private fun MiniCoffeeCard(
 
 @Composable
 private fun MiniCardWithButton(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    openBuyingPanel: () -> Unit,
+    navController: NavController
 ) {
     MiniCoffeeCard(modifier) {
         Box(
@@ -154,10 +148,20 @@ private fun MiniCardWithButton(
                     painter = painterResource(R.drawable.banner),
                     contentScale = ContentScale.Crop
                 )
+                .clickable {
+                    navController.navigate(Screen.CoffeeDetail.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
         ) {
             SmallFloatingActionButton(
-                onClick = { /*TODO*/ },
+                onClick = openBuyingPanel,
                 containerColor = FabColor,
+                contentColor = Secondary,
                 modifier = Modifier
                     .align(BottomEnd)
                     .padding(end = 4.dp, bottom = 4.dp)
@@ -193,7 +197,11 @@ private fun MiniCoffeeCardType(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun MiniCoffeeCardsColumn(modifier: Modifier = Modifier) {
+fun MiniCoffeeCardsColumn(
+    navController: NavController,
+    modifier: Modifier = Modifier,
+    openBuyingPanel: () -> Unit
+) {
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -202,26 +210,16 @@ fun MiniCoffeeCardsColumn(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            MiniCardWithButton(Modifier.padding(start = 14.dp))
-            MiniCardWithButton(Modifier.padding(end = 14.dp))
-        }
-    }
-}
-
-@Composable
-private fun OrderCard(modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier
-            .width(320.dp)
-            .height(200.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Main)
-    ) {
-        Box {
-            Column() {
-                OrderPreview(modifier)
-                OrderStatus()
-            }
+            MiniCardWithButton(
+                Modifier.padding(start = 14.dp),
+                openBuyingPanel,
+                navController
+            )
+            MiniCardWithButton(
+                Modifier.padding(end = 14.dp),
+                openBuyingPanel,
+                navController
+            )
         }
     }
 }
@@ -268,23 +266,8 @@ private fun OrderStatus() {
             text = "Статус: " + "Готовится",
             fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
-            color = LightGrey
+            color = LightGray
         )
-    }
-}
-
-@Composable
-fun OrderCardRow(
-    modifier: Modifier = Modifier,
-    count: Int
-) {
-    LazyRow(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        items(count) {
-            OrderCard()
-        }
     }
 }
 
@@ -299,4 +282,54 @@ fun CoffeeTypesColumn(modifier: Modifier = Modifier) {
             MiniCoffeeCardType()
         }
     }
+}
+
+@Composable
+fun RefundCard(
+    date: String,
+    price: String
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(250.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Light,
+            contentColor = Secondary
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp)
+                    .padding(start = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = date,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = price,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+            BuyCoffeeRow(Modifier.fillMaxWidth().padding(start = 20.dp))
+            RefundCardImage(Modifier.fillMaxWidth())
+        }
+    }
+}
+
+/* TODO: ADD REFUND BOTTOM IMAGE */
+@Composable
+private fun RefundCardImage(modifier: Modifier) {
+
 }

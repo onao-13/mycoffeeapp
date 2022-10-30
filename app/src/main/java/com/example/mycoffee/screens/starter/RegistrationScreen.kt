@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
@@ -69,7 +68,7 @@ fun RegistrationScreen(navController: NavController) {
                 .fillMaxWidth()
                 .wrapContentWidth(CenterHorizontally)
                 .constrainAs(text) {
-                    top.linkTo(parent.top, margin = 80.dp)
+                    top.linkTo(parent.top, margin = 40.dp)
             }
         )
         RegistrationForm(
@@ -87,7 +86,7 @@ fun RegistrationScreen(navController: NavController) {
                 .constrainAs(login) {
                     bottom.linkTo(registration.top, margin = 20.dp)
                 },
-            onClick = { navController.navigate(Screen.Stock.toString()) },
+            onClick = { navController.navigate(Screen.Stock.route) },
             buttonTitle = "Зарегестрироваться"
         )
         SecondaryButton(

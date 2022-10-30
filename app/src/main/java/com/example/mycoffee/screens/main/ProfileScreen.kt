@@ -3,13 +3,11 @@ package com.example.mycoffee.screens.main
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,7 +18,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mycoffee.components.*
 import com.example.mycoffee.ui.theme.BackgroundColor
-import com.example.mycoffee.ui.theme.Main
 import com.example.mycoffee.ui.theme.MyCoffeeTheme
 
 class ProfileActivity: ComponentActivity() {
@@ -39,7 +36,7 @@ class ProfileActivity: ComponentActivity() {
 @Composable
 fun ProfileScreen(navController: NavController) {
     Scaffold(
-        topBar = { SearchBagNotificationTopBar() },
+        topBar = { SearchBagNotificationTopBar(navController) },
         containerColor = BackgroundColor,
         bottomBar = { NavigationMenu(navController) }
     ) {
@@ -54,7 +51,7 @@ fun ProfileScreen(navController: NavController) {
                 ProfilePreview()
             }
             item {
-                Menu()
+                Menu(navController)
             }
             item {
                 Divider(
@@ -64,10 +61,13 @@ fun ProfileScreen(navController: NavController) {
                 )
             }
             item {
-                Settings()
+                Settings(navController)
             }
             item {
                 Version()
+            }
+            item {
+                Spacer(Modifier.padding(top = 20.dp))
             }
         }
     }

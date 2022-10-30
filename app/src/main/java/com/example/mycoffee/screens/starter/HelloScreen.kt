@@ -80,7 +80,7 @@ fun HelloScreen(navController: NavController) {
                 .constrainAs(button) {
                     bottom.linkTo(parent.bottom, margin = 40.dp)
                 },
-            onClick = { navController.navigate(Screen.Registration.toString()) },
+            onClick = { navController.navigate(Screen.Registration.route) },
             buttonTitle = "Продолжить"
         )
     }

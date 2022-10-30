@@ -2,13 +2,14 @@ package com.example.mycoffee.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+/* TODO: ADD DARK COLORS*/
 val RedFocus = Color(0xFFE2434B)
 val Light = Color(0xFFFEE9D7)
 val Disabled = Color(0xFF646363)
 val Secondary = Color(0xFF34222E)
 val Main = Color(0xFFF9BF8F)
-val LightGrey = Color(0xFF646363)
-val BackgroundColor = Color(0xFFE5D2C2)
+val LightGray = Color(0xFF646363)
+val BackgroundColor = Color(0xFFF5DCCB) //0xFFE5D2C2
 
 val DisabledFont = Color(0xFFDFDCDC)
 val Darkness = Color(0xFF1D1D29)

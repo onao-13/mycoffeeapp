@@ -1,10 +1,9 @@
-package com.example.mycoffee.screens.main
+package com.example.mycoffee.screens.profile_categories
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,54 +14,46 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.mycoffee.components.*
+import com.example.mycoffee.components.SecondaryTopBar
+import com.example.mycoffee.components.ThemeSettings
 import com.example.mycoffee.ui.theme.BackgroundColor
 import com.example.mycoffee.ui.theme.MyCoffeeTheme
+import com.example.mycoffee.ui.theme.Secondary
 
-class CoffeeListActivity: ComponentActivity() {
+class SettingsActivity(): ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { 
+        setContent {
             val navController = rememberNavController()
-            CoffeeListScreen(navController)
+            SettingsScreen(navController)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CoffeeListScreen(navController: NavController) {
+fun SettingsScreen(navController: NavController) {
     Scaffold(
-        topBar = { SearchTopBar() },
+        topBar = { SecondaryTopBar("Настройки", navController) },
         containerColor = BackgroundColor,
-        bottomBar = { NavigationMenu(navController) }
+        contentColor = Secondary
     ) {
         LazyColumn(
-            modifier = Modifier
-                .padding(it),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier.padding(it),
+            verticalArrangement = Arrangement.spacedBy(30.dp)
         ) {
             item {
-                Title(
-                    "Виды кофе",
-                    Modifier.padding(
-                        start = 14.dp,
-                        top = 20.dp
-                    )
-                )
-            }
-            items(6) {
-                CoffeeTypesColumn()
+                ThemeSettings(Modifier.padding(top = 20.dp))
             }
         }
     }
 }
 
-@Preview
+@Preview(widthDp = 375, heightDp = 812)
 @Composable
 private fun Preview() {
     MyCoffeeTheme {
         val navController = rememberNavController()
-        CoffeeListScreen(navController)
+        SettingsScreen(navController)
     }
 }

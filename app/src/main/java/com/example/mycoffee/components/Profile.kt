@@ -6,28 +6,27 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.mycoffee.R
+import com.example.mycoffee.system.Screen
 import com.example.mycoffee.ui.theme.Light
 import com.example.mycoffee.ui.theme.Main
-import com.example.mycoffee.ui.theme.MyCoffeeTheme
 
 @Composable
 fun ProfilePreview(modifier: Modifier = Modifier) {
@@ -91,28 +90,53 @@ private fun MyBonusPoints(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun Menu(modifier: Modifier = Modifier) {
+fun Menu(
+    navController: NavController,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier
             .fillMaxWidth(0.92f)
             .wrapContentWidth(CenterHorizontally)
-            .background(Light, RoundedCornerShape(16.dp)),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .background(Light, RoundedCornerShape(16.dp))
     ) {
-        MenuText("Мой профиль", Modifier.padding(top = 16.dp))
+        MenuButton(
+            navController,
+            Screen.ProfileDetail,
+            "Мой профиль"
+        )
         MenuDivider()
-        MenuText("Корзина")
+        MenuButton(
+            navController,
+            Screen.Basket,
+            "Корзина"
+        )
         MenuDivider()
-        MenuText("Возвраты")
+        MenuButton(
+            navController,
+            Screen.Refunds,
+            "Возвраты"
+        )
         MenuDivider()
-        MenuText("Мои заказы")
+        MenuButton(
+            navController,
+            Screen.Orders,
+            "Мои заказы"
+        )
         MenuDivider()
-        MenuText("Избранное", Modifier.padding(bottom = 16.dp))
+        MenuButton(
+            navController,
+            Screen.Favorites,
+            "Избранное"
+        )
     }
 }
 
 @Composable
-fun Settings(modifier: Modifier = Modifier) {
+fun Settings(
+    navController: NavController,
+    modifier: Modifier = Modifier
+) {
     Card(
         modifier = modifier
             .fillMaxWidth(0.92f)
@@ -120,9 +144,10 @@ fun Settings(modifier: Modifier = Modifier) {
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Light)
     ) {
-        MenuText("Настройки", modifier
-            .fillMaxSize()
-            .padding(top = 16.dp, bottom = 16.dp)
+        MenuButton(
+            navController,
+            Screen.Settings,
+            "Настройки"
         )
     }
 }
@@ -130,23 +155,9 @@ fun Settings(modifier: Modifier = Modifier) {
 @Composable
 fun Version() {
     Text(
-        text = "CofemoApp, 0.2dev",
+        text = "CofemoApp, 0.3dev",
         fontSize = 14.sp,
         fontWeight = FontWeight.ExtraLight
-    )
-}
-
-@Composable
-private fun MenuText(
-    title: String,
-    modifier: Modifier = Modifier
-) {
-    Text(
-        modifier = modifier
-            .padding(start = 10.dp),
-        text = title,
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Medium
     )
 }
 
@@ -157,4 +168,40 @@ private fun MenuDivider(modifier: Modifier = Modifier) {
         thickness = 1.dp,
         color = Color.Black
     )
+}
+
+/* TODO: ADD STATISTIC ICONS */
+@Composable
+fun ProfileStatistic(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(300.dp)
+            .padding(start = 14.dp),
+        horizontalAlignment = Start,
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        StatisticBlock(title = "Заказов", icon = painterResource(R.drawable.show_icon_18))
+        StatisticBlock(title = "Заработано бонусов", icon = painterResource(R.drawable.hide_icon_18))
+    }
+}
+
+@Composable
+private fun StatisticBlock(
+    title: String,
+    icon: Painter,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.height(30.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = icon,
+            contentDescription = "statistic icon",
+            modifier = Modifier.size(24.dp)
+        )
+        LittleBoldFont(title)
+    }
 }

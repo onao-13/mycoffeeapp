@@ -1,68 +1,65 @@
-package com.example.mycoffee.screens.main
+package com.example.mycoffee.screens.editing
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mycoffee.components.*
+import com.example.mycoffee.system.Screen
 import com.example.mycoffee.ui.theme.BackgroundColor
 import com.example.mycoffee.ui.theme.MyCoffeeTheme
+import com.example.mycoffee.ui.theme.Secondary
 
-class CoffeeListActivity: ComponentActivity() {
+class EditPasswordActivity(): ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { 
+        setContent {
             val navController = rememberNavController()
-            CoffeeListScreen(navController)
+            EditPasswordScreen(navController)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CoffeeListScreen(navController: NavController) {
+fun EditPasswordScreen(navController: NavController) {
     Scaffold(
-        topBar = { SearchTopBar() },
+        topBar = { SecondaryTopBar("Смена пароля", navController) },
+        bottomBar = { SecondaryBottomBar("Сменить пароль", navController) },
         containerColor = BackgroundColor,
-        bottomBar = { NavigationMenu(navController) }
+        contentColor = Secondary
     ) {
-        LazyColumn(
+        Box(
             modifier = Modifier
-                .padding(it),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(it)
+                .fillMaxSize()
         ) {
-            item {
-                Title(
-                    "Виды кофе",
-                    Modifier.padding(
-                        start = 14.dp,
-                        top = 20.dp
-                    )
-                )
-            }
-            items(6) {
-                CoffeeTypesColumn()
+            Column(
+                modifier = Modifier.padding(top = 30.dp).fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(40.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Title("Введите новый пароль:")
+                MainTextField()
             }
         }
     }
 }
 
-@Preview
+@Preview(widthDp = 375, heightDp = 812)
 @Composable
 private fun Preview() {
     MyCoffeeTheme {
         val navController = rememberNavController()
-        CoffeeListScreen(navController)
+        EditPasswordScreen(navController)
     }
 }
