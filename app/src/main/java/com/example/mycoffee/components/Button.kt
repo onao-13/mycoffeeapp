@@ -20,13 +20,14 @@ import com.example.mycoffee.ui.theme.*
 fun MainFocusButton(
     buttonTitle: String,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     FilledTonalButton(
         modifier = modifier
             .fillMaxWidth(0.84f)
             .height(50.dp),
-        enabled = true,
+        enabled = enabled,
         shape = RoundedCornerShape(100.dp),
         colors = mainFocusButtonColors(),
         onClick = onClick) {

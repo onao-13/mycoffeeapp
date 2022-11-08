@@ -3,7 +3,6 @@ package com.example.mycoffee.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.ScrollableState
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -20,26 +19,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.example.mycoffee.model.BasketProduct
+import com.example.mycoffee.model.Product
 import com.example.mycoffee.ui.theme.*
-import kotlin.math.roundToInt
+import com.example.mycoffee.viewmodel.BasketViewModel
 
 @Composable
 fun BuyingPanel(
-    navController: NavController,
     scrollableState: ScrollableState,
-    panelHeight: Float
+    panelHeight: Float,
+    product: Product,
+    basketViewModel: BasketViewModel,
+    onClick: () -> Unit
 ) {
     val sugarCount = remember { mutableStateOf(2) }
     val coffeeCount = remember { mutableStateOf(1) }
+
+    val sugarCountPrice = 20 /* TODO: DELETE THIS!! */
+    val totalSugarPrice = sugarCountPrice * sugarCount.value
+    val totalPrice = (product.price * coffeeCount.value) + totalSugarPrice
 
     Card(
         modifier = Modifier
@@ -63,7 +65,7 @@ fun BuyingPanel(
             verticalArrangement = Arrangement.spacedBy(55.dp),
             horizontalAlignment = Alignment.Start
         ) {
-            BuyingRowHeader()
+            BuyingRowHeader(product.name)
             BuyingRow(
                 left = { BuyingRowText("Кубиков кофе") },
                 right = { SugarCounter(
@@ -89,10 +91,7 @@ fun BuyingPanel(
                 },
                 right = {
                     Column {
-                        PriceText(
-                        340, coffeeCount.value,
-                            sugarSum(sugarCount.value)
-                        )
+                        PriceText(totalPrice)
                         SecondaryPrice(
                             sugarCount.value.toString() + "x " +
                                     sugarSum(sugarCount.value).toString() + "₽",
@@ -108,7 +107,16 @@ fun BuyingPanel(
                     .padding(bottom = 8.dp),
                 buttonTitle = "Добавить в корзину"
             ) {
+                val basketProduct = BasketProduct(
+                    product.id,
+                    coffeeCount.value,
+                    product.name,
+                    totalPrice
+                )
 
+                basketViewModel.addToBasket(basketProduct)
+
+                onClick()
             }
         }
     }
@@ -236,8 +244,7 @@ private fun BuyingRow(
 
 @Composable
 private fun BuyingRowText(
-    text: String,
-    modifier: Modifier = Modifier
+    text: String
 ) {
     Text(
         text = text,
@@ -247,7 +254,7 @@ private fun BuyingRowText(
 }
 
 @Composable
-private fun BuyingRowHeader() {
+private fun BuyingRowHeader(coffeeName: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -263,7 +270,7 @@ private fun BuyingRowHeader() {
             color = Color(0xFFF5F5F5)
         )
         Text(
-            text = "Название кофе",
+            text = coffeeName,
             fontSize = 20.sp,
             fontWeight = FontWeight.Medium,
             modifier = Modifier.padding(
@@ -276,11 +283,8 @@ private fun BuyingRowHeader() {
 
 @Composable
 private fun PriceText(
-    coffeeCountPrice: Int, coffeeCount: Int = 1,
-    totalSugarPrice: Int
+    totalPrice: Int
 ) {
-    val totalPrice = (coffeeCountPrice * coffeeCount) + totalSugarPrice
-
     Text(
         text = totalPrice.toString() + "₽",
         fontSize = 20.sp,

@@ -57,9 +57,9 @@ fun CoffeePreview(
 }
 
 @Composable
-fun CoffeeDescription(modifier: Modifier = Modifier) {
+fun CoffeeDescription(description: String) {
     Card(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.3f),
         shape = RoundedCornerShape(16.dp),
@@ -82,7 +82,7 @@ fun CoffeeDescription(modifier: Modifier = Modifier) {
                 textAlign = TextAlign.Start
             )
             Text(
-                text = "Описание",
+                text = description,
                 modifier = Modifier.padding(start = 10.dp)
             )
         }
@@ -90,7 +90,7 @@ fun CoffeeDescription(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun BuyingBar(onClick: () -> Unit) {
+fun BuyingBar(price: Int, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -106,7 +106,7 @@ fun BuyingBar(onClick: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            PriceText(Modifier.padding(start = 18.dp))
+            PriceText(Modifier.padding(start = 18.dp), price)
             BuyButton(Modifier.padding(end = 18.dp)) {
                 onClick()
             }
@@ -115,9 +115,12 @@ fun BuyingBar(onClick: () -> Unit) {
 }
 
 @Composable
-private fun PriceText(modifier: Modifier = Modifier) {
+private fun PriceText(
+    modifier: Modifier = Modifier,
+    price: Int
+) {
     Text(
-        text = "Цена: " + "340" + "₽",
+        text = "Цена: " + price + "₽",
         fontSize = 20.sp,
         fontWeight = FontWeight.Medium,
         modifier = modifier
@@ -148,36 +151,3 @@ private fun colors(): ButtonColors {
         containerColor = Main
     )
 }
-
-//@Composable
-//private fun DescriptionButton(
-//    modifier: Modifier = Modifier,
-//    show: Boolean = false,
-//    onClick: () -> Unit
-//) {
-//    Button(
-//        onClick = onClick,
-//        colors = ButtonDefaults.buttonColors(
-//            containerColor = Light,
-//            contentColor = LightGray
-//        ),
-//        modifier = modifier
-//            .height(40.dp)
-//            .width(160.dp)
-//    ) {
-//        Row(
-//            modifier = Modifier.fillMaxSize(),
-//            verticalAlignment = Alignment.CenterVertically,
-//            horizontalArrangement = Arrangement.spacedBy(16.dp)
-//        ) {
-//            Text(
-//                text = if (show) "Свернуть" else "Развернуть"
-//            )
-//            Icon(
-//                painter = if (show) painterResource(R.drawable.hide_icon_18)
-//                    else painterResource(R.drawable.show_icon_18),
-//                contentDescription = "coffee description icon"
-//            )
-//        }
-//    }
-//}

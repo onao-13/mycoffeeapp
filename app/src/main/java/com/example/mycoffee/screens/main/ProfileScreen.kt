@@ -9,16 +9,20 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mycoffee.components.*
 import com.example.mycoffee.ui.theme.BackgroundColor
 import com.example.mycoffee.ui.theme.MyCoffeeTheme
+import com.example.mycoffee.viewmodel.BasketViewModel
+import com.example.mycoffee.viewmodel.ProfileViewModel
 
 class ProfileActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,9 +38,18 @@ class ProfileActivity: ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(navController: NavController) {
+fun ProfileScreen(
+    navController: NavController,
+    profileViewModel: ProfileViewModel = viewModel(),
+    basketViewModel: BasketViewModel = viewModel()
+) {
+    val profile = profileViewModel.profile.collectAsState().value
+
+    //Basket count
+    val count = basketViewModel.productsCountInBasket.collectAsState().value
+
     Scaffold(
-        topBar = { SearchBagNotificationTopBar(navController) },
+        topBar = { SearchBagNotificationTopBar(navController, count) },
         containerColor = BackgroundColor,
         bottomBar = { NavigationMenu(navController) }
     ) {
@@ -48,7 +61,7 @@ fun ProfileScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
-                ProfilePreview()
+                ProfilePreview(profile.name)
             }
             item {
                 Menu(navController)
@@ -62,6 +75,14 @@ fun ProfileScreen(navController: NavController) {
             }
             item {
                 Settings(navController)
+            }
+            item {
+                MainFocusButton(
+                    buttonTitle = "Выйти с аккаунта",
+                    modifier = Modifier.fillMaxWidth(0.9f)
+                ) {
+                    profileViewModel.logout(profile)
+                }
             }
             item {
                 Version()

@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -24,13 +25,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mycoffee.R
+import com.example.mycoffee.model.Profile
 import com.example.mycoffee.system.Screen
 import com.example.mycoffee.ui.theme.Light
 import com.example.mycoffee.ui.theme.Main
+import com.example.mycoffee.viewmodel.ProfileViewModel
 
 @Composable
-fun ProfilePreview(modifier: Modifier = Modifier) {
-    Column(modifier = modifier.fillMaxSize()) {
+fun ProfilePreview(name: String) {
+    Column(modifier = Modifier.fillMaxSize()) {
         Box {
             Box(
                 Modifier
@@ -47,6 +50,7 @@ fun ProfilePreview(modifier: Modifier = Modifier) {
                 verticalAlignment = Alignment.Bottom
             ) {
                 ProfileIcon()
+                MediumRegularFont(name)
                 MyBonusPoints()
             }
         }
@@ -123,22 +127,15 @@ fun Menu(
             Screen.Orders,
             "Мои заказы"
         )
-        MenuDivider()
-        MenuButton(
-            navController,
-            Screen.Favorites,
-            "Избранное"
-        )
     }
 }
 
 @Composable
 fun Settings(
-    navController: NavController,
-    modifier: Modifier = Modifier
+    navController: NavController
 ) {
     Card(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth(0.92f)
             .wrapContentWidth(CenterHorizontally),
         shape = RoundedCornerShape(16.dp),
@@ -155,7 +152,7 @@ fun Settings(
 @Composable
 fun Version() {
     Text(
-        text = "CofemoApp, 0.3dev",
+        text = "CofemoApp, 0.4dev",
         fontSize = 14.sp,
         fontWeight = FontWeight.ExtraLight
     )
@@ -176,7 +173,7 @@ fun ProfileStatistic(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .height(300.dp)
+            .height(100.dp)
             .padding(start = 14.dp),
         horizontalAlignment = Start,
         verticalArrangement = Arrangement.spacedBy(10.dp)

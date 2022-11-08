@@ -1,6 +1,8 @@
 package com.example.mycoffee.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -11,14 +13,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.mycoffee.model.Order
+import com.example.mycoffee.model.OrderStatus
 import com.example.mycoffee.ui.theme.Light
 import com.example.mycoffee.ui.theme.Secondary
 
 @Composable
 fun OrderCard(
     title: String,
-    price: String,
-    order: String
+    order: Order
 ) {
     Card(
         modifier = Modifier
@@ -44,7 +47,7 @@ fun OrderCard(
                 horizontalArrangement = Arrangement.spacedBy(18.dp)
             ) {
                 MediumSemiBoldFont(title)
-                MediumSemiBoldFont(price + "₽")
+                MediumSemiBoldFont(order.price.toString() + "₽")
             }
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(
@@ -52,11 +55,19 @@ fun OrderCard(
                     fontSize = 20.sp,
                     fontWeight = Medium
                 )
-                Text(
-                    text = order,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Light
-                )
+                /* TODO: FIX COFFEES IN ORDER */
+//                LazyRow(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+//                ) {
+//                    items(order) { product ->
+//                        Text(
+//                            text = product.name,
+//                            fontSize = 14.sp,
+//                            fontWeight = FontWeight.Light
+//                        )
+//                    }
+//                }
             }
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(
@@ -64,14 +75,14 @@ fun OrderCard(
                     fontSize = 20.sp,
                     fontWeight = Medium
                 )
-                StatusBar()
+                StatusBar(order.status)
             }
         }
     }
 }
 
 @Composable
-private fun StatusBar() {
+private fun StatusBar(status: String) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -91,15 +102,63 @@ private fun StatusBar() {
                 .fillMaxWidth()
                 .height(30.dp)
                 .padding(start = 16.dp)) {
-            Circle(color = StatusColor.Complete)
-            Line(lineColor = StatusColor.Complete)
-            Circle(color = StatusColor.Complete)
-            Line(lineColor = StatusColor.Complete)
-            Circle(color = StatusColor.InProgress)
-            Line(lineColor = StatusColor.NotStatus)
-            Circle(color = StatusColor.NotStatus)
+            VisibilityBar(status)
         }
     }
+}
+
+@Composable
+private fun VisibilityBar(status: String) {
+    when(status) {
+        OrderStatus.Paid.status -> PaidBar()
+        OrderStatus.Cooking.status -> CookingBar()
+        OrderStatus.Cooked.status -> CookedBar()
+        else -> GivenBar()
+    }
+}
+
+@Composable
+private fun PaidBar() {
+    Circle(color = StatusColor.Complete)
+    Line(lineColor = StatusColor.NotStatus)
+    Circle(color = StatusColor.NotStatus)
+    Line(lineColor = StatusColor.NotStatus)
+    Circle(color = StatusColor.NotStatus)
+    Line(lineColor = StatusColor.NotStatus)
+    Circle(color = StatusColor.NotStatus)
+}
+
+@Composable
+private fun CookingBar() {
+    Circle(color = StatusColor.Complete)
+    Line(lineColor = StatusColor.Complete)
+    Circle(color = StatusColor.InProgress)
+    Line(lineColor = StatusColor.NotStatus)
+    Circle(color = StatusColor.NotStatus)
+    Line(lineColor = StatusColor.NotStatus)
+    Circle(color = StatusColor.NotStatus)
+}
+
+@Composable
+private fun CookedBar() {
+    Circle(color = StatusColor.Complete)
+    Line(lineColor = StatusColor.Complete)
+    Circle(color = StatusColor.Complete)
+    Line(lineColor = StatusColor.Complete)
+    Circle(color = StatusColor.InProgress)
+    Line(lineColor = StatusColor.NotStatus)
+    Circle(color = StatusColor.NotStatus)
+}
+
+@Composable
+private fun GivenBar() {
+    Circle(color = StatusColor.Complete)
+    Line(lineColor = StatusColor.Complete)
+    Circle(color = StatusColor.Complete)
+    Line(lineColor = StatusColor.Complete)
+    Circle(color = StatusColor.Complete)
+    Line(lineColor = StatusColor.Complete)
+    Circle(color = StatusColor.Complete)
 }
 
 @Composable

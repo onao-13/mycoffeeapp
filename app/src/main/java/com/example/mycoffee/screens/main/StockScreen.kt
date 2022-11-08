@@ -6,17 +6,26 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
 import com.example.mycoffee.components.*
+import com.example.mycoffee.model.Product
+import com.example.mycoffee.system.Screen
+import com.example.mycoffee.system.SendProductData
 import com.example.mycoffee.ui.theme.BackgroundColor
 import com.example.mycoffee.ui.theme.MyCoffeeTheme
+import com.example.mycoffee.viewmodel.BasketViewModel
+import com.example.mycoffee.viewmodel.OrderViewModel
+import com.example.mycoffee.viewmodel.ProductViewModel
 
 class StockActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +41,13 @@ class StockActivity: ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StockScreen(navController: NavController) {
+fun StockScreen(
+    navController: NavController,
+    productViewModel: ProductViewModel = viewModel(),
+    orderViewModel: OrderViewModel = viewModel(),
+    basketViewModel: BasketViewModel = viewModel()
+) {
+    // Panel params
     val showBuyingPanel = remember { mutableStateOf(false) }
 
     var panelHeight by remember { mutableStateOf(0.55f) }
@@ -40,8 +55,17 @@ fun StockScreen(navController: NavController) {
     if (panelHeight <= 0.05f) showBuyingPanel.value = false
     val height = if (panelHeight <= 0.55f) panelHeight else 0.55f
 
+    // Product list
+    val productData = productViewModel.productList.collectAsState().value
+    val orderData = orderViewModel.orderList.collectAsState().value
+
+    val productManager = SendProductData<Product>(Product(0, "", 0, ""))
+
+    //Basket count
+    val count = basketViewModel.productsCountInBasket.collectAsState().value
+
     Scaffold(
-        topBar = { SearchBagNotificationTopBar(navController) },
+        topBar = { SearchBagNotificationTopBar(navController, count) },
         containerColor = BackgroundColor,
         bottomBar = {
             if (!showBuyingPanel.value) {
@@ -50,13 +74,16 @@ fun StockScreen(navController: NavController) {
                 NavigationMenu(navController)
             } else {
                 BuyingPanel(
-                    navController,
                     rememberScrollableState { delta ->
                         panelHeight -= delta / 2000f
                         delta
                     },
-                    height
-                )
+                    height,
+                    productManager.getProductData(),
+                    basketViewModel
+                ) {
+                    showBuyingPanel.value = false
+                }
             }
         }
     ) {
@@ -83,20 +110,36 @@ fun StockScreen(navController: NavController) {
                 Title("Популярное у нас")
             }
             item {
-                CoffeeCardRow(
-                    Modifier.padding(start = 14.dp, end = 14.dp),
-                    4,
-                    navController
+                LazyRow(
+                    modifier = Modifier.padding(start = 14.dp, end = 14.dp),
+                    horizontalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
-                    showBuyingPanel.value = true
+                    items(productData) { product ->
+                        CoffeeCard(
+                            openBuyingPanel = {
+                                productManager.sendProductData(product)
+                                showBuyingPanel.value = true
+                            },
+                            name = product.name,
+                            description = product.description
+                        ) {
+                            navController.navigate(Screen.CoffeeDetail.id(product.id)) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    }
                 }
             }
             item {
                 Title("Попробуй так же")
             }
-            items(6) {
+            items(productData) { product ->
                 MiniCoffeeCardsColumn(
-                    navController = navController
+                    navController, product
                 ) {
                     showBuyingPanel.value = true
                 }
@@ -111,18 +154,9 @@ fun StockScreen(navController: NavController) {
                         bottom = 20.dp,
                         end = 14.dp
                     ),
-                    4
+                    orderData
                 )
             }
         }
-    }
-}
-
-@Preview(widthDp = 400, heightDp = 1300)
-@Composable
-private fun StockScreenPreview() {
-    MyCoffeeTheme {
-        val navController = rememberNavController()
-        StockScreen(navController)
     }
 }

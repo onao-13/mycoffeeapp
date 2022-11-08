@@ -3,6 +3,7 @@ package com.example.mycoffee.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,8 +16,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mycoffee.R
+import com.example.mycoffee.model.BasketProduct
+import com.example.mycoffee.model.Profile
+import com.example.mycoffee.system.Screen
 import com.example.mycoffee.ui.theme.BackgroundColor
 import com.example.mycoffee.ui.theme.Secondary
+import com.example.mycoffee.viewmodel.ProfileViewModel
 
 @Composable
 fun SecondaryTopBar(
@@ -58,7 +63,10 @@ fun SecondaryTopBar(
 fun SecondaryBottomBar(
     title: String,
     navController: NavController,
+    updateProfile: () -> Unit = {}
 ) {
+
+
     Box(Modifier.fillMaxWidth()) {
         MainFocusButton(
             buttonTitle = title,
@@ -67,13 +75,18 @@ fun SecondaryBottomBar(
                 .align(Alignment.Center)
                 .padding(bottom = 8.dp)
         ) {
-            /* TODO: ADD NAVIGATION */
+            updateProfile()
+            navController.navigate(Screen.Profile.route)
         }
     }
 }
 
 @Composable
-fun Basket(modifier: Modifier = Modifier) {
+fun Basket(
+    modifier: Modifier = Modifier,
+    basketProductData: List<BasketProduct>,
+    delProductFromBasket: (BasketProduct) -> Unit
+) {
     MainCard(modifier.fillMaxWidth(0.9f)) {
         Column(
             modifier = Modifier
@@ -95,8 +108,11 @@ fun Basket(modifier: Modifier = Modifier) {
                 userScrollEnabled = false,
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                items(3) {
-                    CoffeeBasketRow()
+                items(basketProductData) { basket ->
+                    CoffeeBasketRow(
+                        basketProduct = basket,
+                        deleteProductFromBasket = { delProductFromBasket(basket) }
+                    )
                 }
             }
         }
@@ -104,28 +120,38 @@ fun Basket(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun CoffeeBasketRow(modifier: Modifier = Modifier) {
+private fun CoffeeBasketRow(
+    basketProduct: BasketProduct,
+    deleteProductFromBasket: (BasketProduct) -> Unit
+) {
     Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        modifier = Modifier
+            .fillMaxWidth().height(30.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "1" + " Латте",
+            text = basketProduct.count.toString() + " " + basketProduct.name,
             fontWeight = FontWeight.Light,
             fontSize = 14.sp,
             color = Secondary
         )
         Text(
-            text = "340" + "₽",
+            text = basketProduct.price.toString() + "₽",
             fontWeight = FontWeight.Normal,
             fontSize = 14.sp,
             color = Secondary
         )
+        IconButton(onClick = {
+            deleteProductFromBasket(basketProduct)
+        }) {
+            Icon(painterResource(R.drawable.delete_24), "delete icon")
+        }
     }
 }
 
 @Composable
-fun TotalPriceBar() {
+fun TotalPriceBar(totalPrice: Int) {
     MainCard(
         Modifier
             .fillMaxWidth(0.9f)
@@ -144,7 +170,7 @@ fun TotalPriceBar() {
                 fontSize = 20.sp
             )
             Text(
-                text = "340" + "₽",
+                text = "$totalPrice₽",
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 20.sp
             )

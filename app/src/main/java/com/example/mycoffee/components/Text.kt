@@ -45,3 +45,12 @@ fun LittleBoldFont(text: String) {
         fontWeight = FontWeight.Bold
     )
 }
+
+@Composable
+fun MediumRegularFont(text: String) {
+    Text(
+        text = text,
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Normal
+    )
+}

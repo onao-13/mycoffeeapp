@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.example.mycoffee.R
+import com.example.mycoffee.model.Product
 import com.example.mycoffee.system.Screen
 import com.example.mycoffee.ui.theme.*
 
@@ -68,6 +69,8 @@ fun BannerCard(
 fun CoffeeCard(
     modifier: Modifier = Modifier,
     openBuyingPanel: () -> Unit,
+    name: String,
+    description: String,
     onClick: () -> Unit
 ) {
     Card(
@@ -101,8 +104,8 @@ fun CoffeeCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column {
-                    Text(text = "Название кофе")
-                    Text(text = "Описание", modifier = Modifier.padding(top = 10.dp))
+                    Text(text = name)
+                    Text(text = description, modifier = Modifier.padding(top = 10.dp))
                 }
                 FloatingActionButton(
                     onClick = openBuyingPanel,
@@ -138,7 +141,8 @@ private fun MiniCoffeeCard(
 private fun MiniCardWithButton(
     modifier: Modifier = Modifier,
     openBuyingPanel: () -> Unit,
-    navController: NavController
+    navController: NavController,
+    product: Product
 ) {
     MiniCoffeeCard(modifier) {
         Box(
@@ -199,6 +203,7 @@ private fun MiniCoffeeCardType(modifier: Modifier = Modifier) {
 @Composable
 fun MiniCoffeeCardsColumn(
     navController: NavController,
+    product: Product,
     modifier: Modifier = Modifier,
     openBuyingPanel: () -> Unit
 ) {
@@ -213,12 +218,14 @@ fun MiniCoffeeCardsColumn(
             MiniCardWithButton(
                 Modifier.padding(start = 14.dp),
                 openBuyingPanel,
-                navController
+                navController,
+                product
             )
             MiniCardWithButton(
                 Modifier.padding(end = 14.dp),
                 openBuyingPanel,
-                navController
+                navController,
+                product
             )
         }
     }
@@ -287,7 +294,7 @@ fun CoffeeTypesColumn(modifier: Modifier = Modifier) {
 @Composable
 fun RefundCard(
     date: String,
-    price: String
+    price: Int
 ) {
     Card(
         modifier = Modifier
@@ -317,7 +324,7 @@ fun RefundCard(
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = price,
+                    text = "$price₽",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.SemiBold
                 )

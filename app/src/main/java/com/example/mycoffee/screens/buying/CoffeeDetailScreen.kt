@@ -3,8 +3,6 @@ package com.example.mycoffee.screens.buying
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,15 +12,18 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mycoffee.components.*
+import com.example.mycoffee.model.Product
 import com.example.mycoffee.ui.theme.BackgroundColor
 import com.example.mycoffee.ui.theme.MyCoffeeTheme
 import com.example.mycoffee.ui.theme.Secondary
+import com.example.mycoffee.viewmodel.BasketViewModel
+import com.example.mycoffee.viewmodel.ProductViewModel
 
 class CoffeeDetailActivity(): ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,9 +35,16 @@ class CoffeeDetailActivity(): ComponentActivity() {
     }
 }
 
+/* TODO: FIX THIS SCREEN */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CoffeeDetailScreen(navController: NavController) {
+fun CoffeeDetailScreen(
+    navController: NavController,
+    id: Int = 0,
+    basketViewModel: BasketViewModel = viewModel(),
+    productViewModel: ProductViewModel = viewModel()
+) {
+    // Panel
     val showBuyingPanel = remember { mutableStateOf(false) }
 
     var panelHeight by remember { mutableStateOf(0.55f) }
@@ -44,22 +52,28 @@ fun CoffeeDetailScreen(navController: NavController) {
     if (panelHeight <= 0.05f) showBuyingPanel.value = false
     val height = if (panelHeight <= 0.55f) panelHeight else 0.55f
 
+    // Product data
+    val coffee = productViewModel.productList.collectAsState().value[id]
+
     Scaffold(
         bottomBar =  {
             if (!showBuyingPanel.value) {
-                BuyingBar {
+                BuyingBar(coffee.price) {
                     showBuyingPanel.value = true
                     panelHeight = 0.55f
                 }
             } else {
                 BuyingPanel(
-                    navController,
                     rememberScrollableState { delta ->
                         panelHeight -= delta / 2000f
                         delta
                     },
-                    height
-                )
+                    height,
+                    Product(0, "", 1, ""),
+                    basketViewModel
+                )  {
+                    showBuyingPanel.value = false
+                }
             }
         },
         containerColor = BackgroundColor,
@@ -75,10 +89,10 @@ fun CoffeeDetailScreen(navController: NavController) {
                 CoffeePreview(navController)
             }
             item {
-                Title("Название кофе")
+                Title(coffee.name)
             }
             item {
-                CoffeeDescription()
+                CoffeeDescription(coffee.description)
             }
         }
     }

@@ -15,17 +15,18 @@ import androidx.compose.ui.unit.sp
 import com.example.mycoffee.ui.theme.*
 
 @Composable
-fun RegistrationForm(modifier: Modifier = Modifier) {
+fun RegistrationForm(
+    modifier: Modifier = Modifier,
+    name: MutableState<String>,
+    number: MutableState<String>,
+    password: MutableState<String>,
+) {
     Card(
         modifier = modifier
             .fillMaxWidth(0.84f),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Light)
     ) {
-        val name = remember { mutableStateOf("") }
-        val number = remember { mutableStateOf("") }
-        val password = remember { mutableStateOf("") }
-
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -104,15 +105,16 @@ private fun formColors(): TextFieldColors {
 }
 
 @Composable
-fun LoginForm(modifier: Modifier = Modifier) {
+fun LoginForm(
+    modifier: Modifier = Modifier,
+    number: MutableState<String>,
+    password: MutableState<String>,
+) {
     Card(
         modifier = modifier.fillMaxWidth(0.84f),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Light)
     ) {
-        val number = remember { mutableStateOf("") }
-        val password = remember { mutableStateOf("") }
-
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
